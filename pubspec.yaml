@@ -51,6 +51,7 @@ dependencies:
   path: ^1.8.3
   intl: ^0.19.0
   flutter_riverpod: ^2.5.1
+  flutter_gif: ^0.0.4
 
   # translator & wiki packages
   google_mlkit_translation: ^0.13.1
