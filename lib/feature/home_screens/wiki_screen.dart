@@ -92,6 +92,7 @@ class _WikiScreenState extends State<WikiScreen> {
                                   imagePath: 'assets/images/wiki_icon.png',
                                   shadowColor: Colors.red,
                                   size: 100,
+                                  //  nextScreen: MultiLangTranslatorPage,
                                 ),
                                 SizedBox(height: scaleHeight(80, context)),
                                 SurvivorAIText(

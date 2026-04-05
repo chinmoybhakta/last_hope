@@ -6,11 +6,14 @@ class PulsingAIImage extends StatefulWidget {
   final Color shadowColor;
   final double size;
 
+  final Widget? nextScreen;
+
   const PulsingAIImage({
     super.key,
     required this.imagePath,
     this.shadowColor = Colors.blueAccent,
     this.size = 100,
+    this.nextScreen,
   });
 
   @override
@@ -42,6 +45,15 @@ class _PulsingAIImageState extends State<PulsingAIImage>
     super.dispose();
   }
 
+  void handleTap() {
+    if (widget.nextScreen != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => widget.nextScreen!),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double scaleWidth(double width) =>
@@ -54,7 +66,7 @@ class _PulsingAIImageState extends State<PulsingAIImage>
           return Transform.scale(
             scale: _scaleAnimation.value,
             child: GestureDetector(
-              onTap: () {},
+              onTap: handleTap,
               child: Container(
                 padding: EdgeInsets.all(scaleWidth(20)),
                 decoration: BoxDecoration(

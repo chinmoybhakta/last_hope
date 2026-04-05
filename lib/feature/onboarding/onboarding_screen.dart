@@ -14,6 +14,7 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
+  int currentPage = 0;
 
   final List<List<String>> images = [
     [
@@ -46,33 +47,97 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
+  void nextPage() {
+    if (currentPage < 2) {
+      _controller.nextPage(
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      goToHome();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.blueAccent.shade700,
-              const Color(0xFFEF6C00),
-              const Color(0xFF1C1C1C),
-            ],
-            stops: const [0.2, 0.6, 1.0],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.blueAccent.shade700,
+                  const Color(0xFFEF6C00),
+                  const Color(0xFF1C1C1C),
+                ],
+                stops: const [0.2, 0.6, 1.0],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: PageView.builder(
+              controller: _controller,
+              itemCount: 3,
+              onPageChanged: (index) {
+                setState(() => currentPage = index);
+              },
+              itemBuilder: (context, index) {
+                return OnboardPage(
+                  images: images[index],
+                  text: texts[index],
+                  onSkip: goToHome,
+                );
+              },
+            ),
           ),
-        ),
-        child: PageView.builder(
-          controller: _controller,
-          itemCount: 3,
-          itemBuilder: (context, index) {
-            return OnboardPage(
-              images: images[index],
-              text: texts[index],
-              onSkip: goToHome,
-            );
-          },
-        ),
+
+          Positioned(
+            bottom: 50,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(3, (index) {
+                bool isActive = currentPage == index;
+
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 6),
+                  width: isActive ? 14 : 8,
+                  height: isActive ? 14 : 8,
+                  decoration: BoxDecoration(
+                    color: isActive
+                        ? Colors.white
+                        : Colors.white.withOpacity(0.4),
+                    shape: BoxShape.circle,
+                  ),
+                );
+              }),
+            ),
+          ),
+
+          if (currentPage < 2)
+            Positioned(
+              bottom: 30,
+              right: 20,
+              child: ElevatedButton(
+                onPressed: nextPage,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text(
+                  "Next",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -143,11 +208,12 @@ class _OnboardPageState extends State<OnboardPage>
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AnimatedGradientText(),
-              SizedBox(height: 40,),
+              const AnimatedGradientText(),
+              const SizedBox(height: 20),
+
               CarouselSlider(
                 options: CarouselOptions(
-                  height: 200,
+                  height: 260,
                   autoPlay: true,
                   enlargeCenterPage: true,
                   viewportFraction: 0.8,
@@ -196,13 +262,6 @@ class _OnboardPageState extends State<OnboardPage>
                           fontSize: 13,
                           letterSpacing: 1.2,
                           fontWeight: FontWeight.w500,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 10,
-                              color: Colors.black54,
-                              offset: Offset(2, 2),
-                            )
-                          ],
                         ),
                       ),
                     ),
@@ -212,43 +271,31 @@ class _OnboardPageState extends State<OnboardPage>
             ],
           ),
 
-      Positioned(
-      top: 10,
-      right: 15,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+          Positioned(
+            top: 10,
+            right: 15,
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-                width: 1,
-              ),
-            ),
-            child: TextButton(
-              onPressed: widget.onSkip,
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: const Text(
-                "Skip",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: TextButton(
+                    onPressed: widget.onSkip,
+                    child: const Text(
+                      "Skip",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
-    ),
         ],
       ),
     );
@@ -265,10 +312,8 @@ class CircleLinesPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
-    const int lines = 12;
-
-    for (int i = 0; i < lines; i++) {
-      double angle = (2 * pi / lines) * i;
+    for (int i = 0; i < 12; i++) {
+      double angle = (2 * pi / 12) * i;
 
       final start = Offset(
         center.dx + (radius - 20) * cos(angle),
@@ -287,6 +332,7 @@ class CircleLinesPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
+
 class AnimatedGradientText extends StatefulWidget {
   const AnimatedGradientText({super.key});
 
@@ -301,11 +347,9 @@ class _AnimatedGradientTextState extends State<AnimatedGradientText>
   @override
   void initState() {
     super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
+    _controller =
+    AnimationController(vsync: this, duration: const Duration(seconds: 3))
+      ..repeat();
   }
 
   @override
@@ -322,7 +366,7 @@ class _AnimatedGradientTextState extends State<AnimatedGradientText>
         return ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors:  [
+              colors: [
                 Colors.blue.shade900,
                 Colors.orange,
                 Colors.blue.shade900,
@@ -332,19 +376,15 @@ class _AnimatedGradientTextState extends State<AnimatedGradientText>
                 _controller.value,
                 (_controller.value + 0.3).clamp(0.0, 1.0),
               ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
             ).createShader(bounds);
           },
-          child:  Text(
+          child: Text(
             "Last Hope",
             style: TextStyle(
               fontSize: 68,
               fontWeight: FontWeight.w900,
               fontStyle: FontStyle.italic,
-              fontFamily: 'Cursive',
               color: Colors.grey.shade300,
-              letterSpacing: 1,
             ),
           ),
         );

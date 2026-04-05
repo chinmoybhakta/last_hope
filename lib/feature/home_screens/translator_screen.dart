@@ -130,6 +130,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
                                   imagePath: 'assets/images/translator_icon.png',
                                   shadowColor: Colors.blueAccent,
                                   size: 100,
+                                //  nextScreen: MultiLangTranslatorPage,
                                 ),
                                 SizedBox(height: scaleHeight(40, context)),
                                 SurvivorAIText(
