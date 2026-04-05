@@ -37,7 +37,7 @@ class _NasaScreenState extends State<NasaScreen> {
                       child: Opacity(
                         opacity: 0.9,
                         child: Image.asset(
-                          'assets/images/fth.gif',
+                          'assets/images/fth.webp',
                           width: double.infinity,
                           fit: BoxFit.cover,
                         ),
